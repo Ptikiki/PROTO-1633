@@ -1,4 +1,5 @@
 const PIXI = require('pixi.js')
+import { raf, RafTimer } from '@internet/raf'
 
 import Renderer from './components/Renderer.class.js'
 import Loader from './components/Loader.class.js'

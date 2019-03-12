@@ -1,5 +1,4 @@
 const PIXI = require('pixi.js')
-console.log(PIXI)
 
 class Sprite {
 
@@ -7,7 +6,7 @@ class Sprite {
     STORAGE.spriteClass = this
     STORAGE.state
     STORAGE.loader = new PIXI.Loader()
-    STORAGE.loader.add("assets/sprites/sprites.json").load(this.setup)
+    STORAGE.loader.add("assets/sprites/atlas.json").load(this.setup)
 
     // directions
     this.left = STORAGE.spriteClass.keyboard("ArrowLeft")
@@ -17,13 +16,15 @@ class Sprite {
   }
 
   setup() {
-    let sheet = STORAGE.loader.resources["assets/sprites/sprites.json"].spritesheet
-    STORAGE.female = new PIXI.Sprite(sheet.textures["land0.png"])
+    STORAGE.sheet = STORAGE.loader.resources["assets/sprites/atlas.json"].spritesheet
+    console.log("sheet", STORAGE.sheet)
+    STORAGE.female = new PIXI.Sprite(STORAGE.sheet.textures["elle-1/land0.png"])
     STORAGE.female.vx = 0
     STORAGE.female.vy = 0
 
     // sprites animation
-    STORAGE.animatedFemale = new PIXI.AnimatedSprite(sheet.animations["land"])
+    STORAGE.animatedFemale = new PIXI.AnimatedSprite(STORAGE.sheet.animations["elle-0/land"])
+    console.log("ici", STORAGE.animatedFemale)
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
 
@@ -41,40 +42,48 @@ class Sprite {
     this.left.press = function(mouseData) {
       STORAGE.female.vx = -2
       STORAGE.female.vy = 0
+      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/land"]
     }
     this.left.release = function(mouseData) {
       if (!that.right.isDown && STORAGE.female.vy === 0) {
         STORAGE.female.vx = 0
+      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
       }
     }
 
     this.up.press = function(mouseData) {
       STORAGE.female.vy = -2
       STORAGE.female.vx = 0
+      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-jump"]
     }
     this.up.release = function(mouseData) {
       if (!that.down.isDown && STORAGE.female.vx === 0) {
         STORAGE.female.vy = 0
+        STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
       }
     }
 
     this.right.press = function(mouseData) {
       STORAGE.female.vx = 2
       STORAGE.female.vy = 0
+      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-menu/waiting"]
     }
     this.right.release = function(mouseData) {
       if (!that.left.isDown && STORAGE.female.vy === 0) {
         STORAGE.female.vx = 0
+        STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
       }
     }
 
     this.down.press = function(mouseData) {
       STORAGE.female.vy = 2
       STORAGE.female.vx = 0
+      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-fall"]
     }
     this.down.release = function(mouseData) {
       if (!that.up.isDown && STORAGE.female.vx === 0) {
         STORAGE.female.vy = 0
+        STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
       }
     }
   }
