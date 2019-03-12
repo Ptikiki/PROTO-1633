@@ -25,6 +25,11 @@ class Sprite {
     // sprites animation
     STORAGE.animatedFemale = new PIXI.AnimatedSprite(STORAGE.sheet.animations["elle-0/land"])
     console.log("ici", STORAGE.animatedFemale)
+    STORAGE.animatedFemale.animationSpeed = 0.5
+    STORAGE.animatedFemale.transform.position._x = 400
+    STORAGE.animatedFemale.transform.position._y = 400
+    STORAGE.animatedFemale.transform.scale._x = 6
+    STORAGE.animatedFemale.transform.scale._y = 6
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
 
@@ -40,19 +45,19 @@ class Sprite {
     let that = this
 
     this.left.press = function(mouseData) {
-      STORAGE.female.vx = -2
+      STORAGE.female.vx = -5
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/land"]
     }
     this.left.release = function(mouseData) {
       if (!that.right.isDown && STORAGE.female.vy === 0) {
         STORAGE.female.vx = 0
-      STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
+        STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-end/dance1"]
       }
     }
 
     this.up.press = function(mouseData) {
-      STORAGE.female.vy = -2
+      STORAGE.female.vy = -5
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-jump"]
     }
@@ -64,7 +69,7 @@ class Sprite {
     }
 
     this.right.press = function(mouseData) {
-      STORAGE.female.vx = 2
+      STORAGE.female.vx = 5
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-menu/waiting"]
     }
@@ -76,7 +81,7 @@ class Sprite {
     }
 
     this.down.press = function(mouseData) {
-      STORAGE.female.vy = 2
+      STORAGE.female.vy = 5
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-fall"]
     }
