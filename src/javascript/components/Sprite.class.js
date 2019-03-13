@@ -1,12 +1,16 @@
 const PIXI = require('pixi.js')
+const projection = require('pixi-projection')
 
 class Sprite {
 
   constructor(options) {
     STORAGE.spriteClass = this
     STORAGE.state
-    STORAGE.loader = new PIXI.Loader()
-    STORAGE.loader.add("assets/sprites/atlas.json").load(this.setup)
+    STORAGE.loader = new PIXI.loaders.Loader()
+    STORAGE.loader
+      .add("bg", "assets/background.jpg")
+      .add("assets/sprites/atlas.json")
+      .load(this.setup)
 
     // directions
     this.left = STORAGE.spriteClass.keyboard("ArrowLeft")
@@ -16,6 +20,27 @@ class Sprite {
   }
 
   setup() {
+    let objs = [], pixie
+
+    // camera
+    STORAGE.camera = new PIXI.projection.Camera3d()
+    STORAGE.camera.setPlanes(300, 10, 1000, false)
+    STORAGE.camera.position.set(600, 0)
+    STORAGE.camera.position3d.y = -0 // STORAGE.camera is above the ground
+    STORAGE.app.stage.addChild(STORAGE.camera)
+    console.log(STORAGE.camera)
+
+    STORAGE.bgLayer = new PIXI.projection.Container3d()
+    STORAGE.bgLayer.proj.affine = PIXI.projection.AFFINE.AXIS_X
+    STORAGE.camera.addChild(STORAGE.bgLayer)
+    STORAGE.bgLayer.position3d.z = 0
+    let background = PIXI.Sprite.fromImage("assets/background.jpg")
+    background.width = STORAGE.app.screen.width*1.3
+    background.height = STORAGE.app.screen.height
+    background.zOrder = -background.y
+    STORAGE.app.stage.addChild(background)
+    STORAGE.bgLayer.addChild(background)
+
     STORAGE.sheet = STORAGE.loader.resources["assets/sprites/atlas.json"].spritesheet
     console.log("sheet", STORAGE.sheet)
     STORAGE.female = new PIXI.Sprite(STORAGE.sheet.textures["elle-1/land0.png"])
@@ -23,13 +48,15 @@ class Sprite {
     STORAGE.female.vy = 0
 
     // sprites animation
-    STORAGE.animatedFemale = new PIXI.AnimatedSprite(STORAGE.sheet.animations["elle-0/land"])
-    console.log("ici", STORAGE.animatedFemale)
+    STORAGE.animatedFemale = new PIXI.extras.AnimatedSprite(STORAGE.sheet.animations["elle-0/land"])
+    console.log("sprite female", STORAGE.animatedFemale)
     STORAGE.animatedFemale.animationSpeed = 0.5
-    STORAGE.animatedFemale.transform.position._x = 400
-    STORAGE.animatedFemale.transform.position._y = 400
-    STORAGE.animatedFemale.transform.scale._x = 6
-    STORAGE.animatedFemale.transform.scale._y = 6
+    STORAGE.animatedFemale.transform.scale._x = 5
+    STORAGE.animatedFemale.transform.scale._y = 5
+    STORAGE.animatedFemale.position.set(window.innerWidth/2, window.innerHeight/1.2)
+
+    STORAGE.animatedFemale.zOrder = +STORAGE.animatedFemale.y
+
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
 
@@ -98,8 +125,9 @@ class Sprite {
   }
 
   play(delta) {
-    STORAGE.animatedFemale.x += STORAGE.female.vx
+    STORAGE.animatedFemale.x += STORAGE.female.vx * delta
     STORAGE.animatedFemale.y += STORAGE.female.vy
+    STORAGE.camera.position3d.x = STORAGE.animatedFemale.x
   }
 
   keyboard(value) {

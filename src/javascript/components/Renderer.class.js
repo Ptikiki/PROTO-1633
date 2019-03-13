@@ -5,20 +5,27 @@ class Renderer {
     constructor(options) {
       this.app = new PIXI.Application({width: window.innerWidth, height: window.innerHeight, antialias: true, transparent: false, resolution: 1})
 
-      //this.renderer = new PIXI.CanvasRenderer(window.innerWidth, window.innerHeight, { antialias: true, clearBeforeRender: false })
-      //this.stage = new PIXI.Container()
-
-      // STORAGE.renderer = this.renderer
-      // STORAGE.stage = this.stage
       STORAGE.app = this.app
+      //STORAGE.loader = this.app.loader
+      STORAGE.stage = this.app.stage
+
+      STORAGE.stage.interactive = true
+
 
       this.init()
     }
 
     init() {
-      // this.renderer.view.classList.add('webGLRenderer')
       document.body.appendChild(this.app.view)
-      //document.body.appendChild(this.renderer.view)
+
+
+      // STORAGE.camera = new PIXI.projection.Camera3d()
+      // STORAGE.camera.setPlanes(300, 10, 1000, false)
+      // STORAGE.camera.position.set(app.screen.width / 2, 0)
+      // STORAGE.camera.position3d.y = -500 // STORAGE.camera is above the ground
+      // STORAGE.stage.addChild(STORAGE.camera)
+
+
     }
 }
 
