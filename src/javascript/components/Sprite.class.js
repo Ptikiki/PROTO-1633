@@ -79,7 +79,7 @@ class Sprite {
     STORAGE.animatedFemale.animationSpeed = 0.4
     STORAGE.animatedFemale.transform.scale = {_x : 5, _y : 5}
     // STORAGE.animatedFemale.position.set(window.innerWidth/2, STORAGE.frontView.y)
-    STORAGE.animatedFemale.position.set(window.innerWidth/2, window.innerHeight-50)
+    STORAGE.animatedFemale.position.set(window.innerWidth/2, window.innerHeight-200)
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
   }
@@ -165,10 +165,17 @@ class Sprite {
       STORAGE.animatedFemale.y = STORAGE.backView.height
     }
 
+    // collision bord gauche
+    if (STORAGE.floor.x >= 0) {
+      STORAGE.floor.x = 0
+      STORAGE.backView.x = 0
+      STORAGE.frontView.x = 0
+    }
+
     // défilement des paysages
     STORAGE.floor.x -= STORAGE.female.vx 
-    STORAGE.backView.x -= STORAGE.female.vx * 0.8
-    STORAGE.frontView.x -= STORAGE.female.vx * 1.3
+    STORAGE.backView.x -= STORAGE.female.vx * 0.6
+    STORAGE.frontView.x -= STORAGE.female.vx * 1.5
   }
 
   keyboard(value) {
