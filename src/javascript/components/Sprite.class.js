@@ -160,8 +160,8 @@ class Sprite {
 
     // défilement des paysages
     STORAGE.background.x -= STORAGE.female.vx 
-    STORAGE.city.x -= STORAGE.female.vx 
-    STORAGE.floor.x -= STORAGE.female.vx 
+    STORAGE.city.x -= STORAGE.female.vx * 0.8
+    STORAGE.floor.x -= STORAGE.female.vx * 1.3
   }
 
   keyboard(value) {
