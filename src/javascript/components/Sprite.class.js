@@ -8,7 +8,7 @@ class Sprite {
     STORAGE.state
     STORAGE.loader = new PIXI.loaders.Loader()
     STORAGE.loader
-      .add("bg", "assets/background.jpg")
+      .add("bg", "assets/floor.jpg")
       .add("assets/sprites/atlas.json")
       .load(this.setup)
 
@@ -20,10 +20,11 @@ class Sprite {
   }
 
   setup() {
-    STORAGE.spriteClass.setBackground()
+    STORAGE.spriteClass.setBackView()
     STORAGE.spriteClass.setFloor()
-    STORAGE.spriteClass.setCity()
     STORAGE.spriteClass.setFemale()
+        STORAGE.spriteClass.setFrontView()
+
     STORAGE.spriteClass.bind()
 
     // animation frame
@@ -31,7 +32,12 @@ class Sprite {
     STORAGE.app.ticker.add(delta => STORAGE.spriteClass.gameLoop(delta))
   }
 
-  setBackground() {
+  setBackView() {
+    STORAGE.backView = PIXI.Sprite.fromImage("assets/backView.jpg")
+    STORAGE.app.stage.addChild(STORAGE.backView)
+  }  
+
+  setFloor() {
     // camera
     // STORAGE.camera = new PIXI.projection.Camera3d()
     // STORAGE.camera.setPlanes(300, 10, 1000, false)
@@ -44,21 +50,21 @@ class Sprite {
     // STORAGE.bgLayer.proj.affine = PIXI.projection.AFFINE.AXIS_X
     // STORAGE.camera.addChild(STORAGE.bgLayer)
     // STORAGE.bgLayer.position3d.z = 0
-    STORAGE.background = PIXI.Sprite.fromImage("assets/background.jpg")
-    STORAGE.background.y = -STORAGE.background.height + 1000
-    STORAGE.app.stage.addChild(STORAGE.background)
-    // STORAGE.bgLayer.addChild(background)
+    STORAGE.floor = PIXI.Sprite.fromImage("assets/floor.jpg")
+    console.log("HA", STORAGE.backView)
+    STORAGE.floor.y = 591 // backView height
+    STORAGE.app.stage.addChild(STORAGE.floor)
+    // STORAGE.bgLayer.addChild(floor)
   }
 
-  setFloor() {
-    STORAGE.floor = PIXI.Sprite.fromImage("assets/floor.jpg")
-    STORAGE.floor.y = window.innerHeight - 300
-    STORAGE.app.stage.addChild(STORAGE.floor)
+  setFrontView() {
+    STORAGE.frontView = PIXI.Sprite.fromImage("assets/frontView.png")
+    STORAGE.frontView.y = window.innerHeight - 390 // frontView height
+    STORAGE.app.stage.addChild(STORAGE.frontView)
   }
-  setCity() {
-    STORAGE.city = PIXI.Sprite.fromImage("assets/city.jpg")
-    STORAGE.app.stage.addChild(STORAGE.city)
-  }
+
+
+
 
   setFemale() {
     STORAGE.sheet = STORAGE.loader.resources["assets/sprites/atlas.json"].spritesheet
@@ -72,7 +78,8 @@ class Sprite {
     console.log("sprite female", STORAGE.animatedFemale)
     STORAGE.animatedFemale.animationSpeed = 0.4
     STORAGE.animatedFemale.transform.scale = {_x : 5, _y : 5}
-    STORAGE.animatedFemale.position.set(window.innerWidth/2, STORAGE.floor.y)
+    // STORAGE.animatedFemale.position.set(window.innerWidth/2, STORAGE.frontView.y)
+    STORAGE.animatedFemale.position.set(window.innerWidth/2, window.innerHeight-50)
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
   }
@@ -138,30 +145,30 @@ class Sprite {
     // STORAGE.animatedFemale.x += STORAGE.female.vx
     // STORAGE.camera.position3d.x = STORAGE.animatedFemale.x
 
-    // collisions avec floor
-    if (STORAGE.animatedFemale.y <= STORAGE.floor.y 
-      || -STORAGE.floor.x+STORAGE.animatedFemale.x >= STORAGE.floor.width 
-      || -STORAGE.floor.x+STORAGE.animatedFemale.x <= 0) {
-      STORAGE.animatedFemale.y += STORAGE.female.vy
-    } 
-    else {
-      STORAGE.animatedFemale.y = STORAGE.floor.y
-    }
+    // collisions avec frontView
+    // if (STORAGE.animatedFemale.y <= STORAGE.frontView.y 
+    //   || -STORAGE.frontView.x+STORAGE.animatedFemale.x >= STORAGE.frontView.width 
+    //   || -STORAGE.frontView.x+STORAGE.animatedFemale.x <= 0) {
+    //   STORAGE.animatedFemale.y += STORAGE.female.vy
+    // } 
+    // else {
+    //   STORAGE.animatedFemale.y = STORAGE.frontView.y
+    // }
 
-    // collisions avec city
-    if (STORAGE.animatedFemale.y >= STORAGE.city.height 
-      || -STORAGE.city.x+STORAGE.animatedFemale.x >= STORAGE.city.width 
-      || -STORAGE.city.x+STORAGE.animatedFemale.x <= 0) {
+    // collisions avec backView
+    if (STORAGE.animatedFemale.y >= STORAGE.backView.height 
+      || -STORAGE.backView.x+STORAGE.animatedFemale.x >= STORAGE.backView.width 
+      || -STORAGE.backView.x+STORAGE.animatedFemale.x <= 0) {
       STORAGE.animatedFemale.y += STORAGE.female.vy
     }
     else {
-      STORAGE.animatedFemale.y = STORAGE.city.height
+      STORAGE.animatedFemale.y = STORAGE.backView.height
     }
 
     // défilement des paysages
-    STORAGE.background.x -= STORAGE.female.vx 
-    STORAGE.city.x -= STORAGE.female.vx * 0.8
-    STORAGE.floor.x -= STORAGE.female.vx * 1.3
+    STORAGE.floor.x -= STORAGE.female.vx 
+    STORAGE.backView.x -= STORAGE.female.vx * 0.8
+    STORAGE.frontView.x -= STORAGE.female.vx * 1.3
   }
 
   keyboard(value) {
