@@ -20,8 +20,18 @@ class Sprite {
   }
 
   setup() {
-    let objs = []
+    STORAGE.spriteClass.setBackground()
+    STORAGE.spriteClass.setFloor()
+    STORAGE.spriteClass.setCity()
+    STORAGE.spriteClass.setFemale()
+    STORAGE.spriteClass.bind()
 
+    // animation frame
+    STORAGE.spriteClass.state = STORAGE.spriteClass.play
+    STORAGE.app.ticker.add(delta => STORAGE.spriteClass.gameLoop(delta))
+  }
+
+  setBackground() {
     // camera
     // STORAGE.camera = new PIXI.projection.Camera3d()
     // STORAGE.camera.setPlanes(300, 10, 1000, false)
@@ -38,7 +48,19 @@ class Sprite {
     STORAGE.background.y = -STORAGE.background.height + 1000
     STORAGE.app.stage.addChild(STORAGE.background)
     // STORAGE.bgLayer.addChild(background)
+  }
 
+  setFloor() {
+    STORAGE.floor = PIXI.Sprite.fromImage("assets/floor.jpg")
+    STORAGE.floor.y = window.innerHeight - 300
+    STORAGE.app.stage.addChild(STORAGE.floor)
+  }
+  setCity() {
+    STORAGE.city = PIXI.Sprite.fromImage("assets/city.jpg")
+    STORAGE.app.stage.addChild(STORAGE.city)
+  }
+
+  setFemale() {
     STORAGE.sheet = STORAGE.loader.resources["assets/sprites/atlas.json"].spritesheet
     console.log("sheet", STORAGE.sheet)
     STORAGE.female = new PIXI.Sprite(STORAGE.sheet.textures["elle-1/land0.png"])
@@ -48,25 +70,18 @@ class Sprite {
     // sprites animation
     STORAGE.animatedFemale = new PIXI.extras.AnimatedSprite(STORAGE.sheet.animations["elle-0/land"])
     console.log("sprite female", STORAGE.animatedFemale)
-    STORAGE.animatedFemale.animationSpeed = 0.5
+    STORAGE.animatedFemale.animationSpeed = 0.4
     STORAGE.animatedFemale.transform.scale = {_x : 5, _y : 5}
-    STORAGE.animatedFemale.position.set(window.innerWidth/2, window.innerHeight/1.2)
+    STORAGE.animatedFemale.position.set(window.innerWidth/2, STORAGE.floor.y)
     STORAGE.animatedFemale.play()
     STORAGE.app.stage.addChild(STORAGE.animatedFemale)
-
-    // bind
-    STORAGE.spriteClass.bind()
-
-    // animation frame
-    STORAGE.spriteClass.state = STORAGE.spriteClass.play
-    STORAGE.app.ticker.add(delta => STORAGE.spriteClass.gameLoop(delta))
   }
 
   bind() {
     let that = this
 
     this.left.press = function(mouseData) {
-      STORAGE.female.vx = -5
+      STORAGE.female.vx = -3
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/land"]
     }
@@ -78,7 +93,7 @@ class Sprite {
     }
 
     this.up.press = function(mouseData) {
-      STORAGE.female.vy = -5
+      STORAGE.female.vy = -3
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-jump"]
     }
@@ -90,7 +105,7 @@ class Sprite {
     }
 
     this.right.press = function(mouseData) {
-      STORAGE.female.vx = 5
+      STORAGE.female.vx = 3
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-menu/waiting"]
     }
@@ -102,7 +117,7 @@ class Sprite {
     }
 
     this.down.press = function(mouseData) {
-      STORAGE.female.vy = 5
+      STORAGE.female.vy = 3
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-fall"]
     }
@@ -119,12 +134,34 @@ class Sprite {
   }
 
   play(delta) {
+    // version caméra 3D
     // STORAGE.animatedFemale.x += STORAGE.female.vx
-    STORAGE.animatedFemale.y += STORAGE.female.vy
     // STORAGE.camera.position3d.x = STORAGE.animatedFemale.x
 
-    // version sans 3D
+    // collisions avec floor
+    if (STORAGE.animatedFemale.y <= STORAGE.floor.y 
+      || -STORAGE.floor.x+STORAGE.animatedFemale.x >= STORAGE.floor.width 
+      || -STORAGE.floor.x+STORAGE.animatedFemale.x <= 0) {
+      STORAGE.animatedFemale.y += STORAGE.female.vy
+    } 
+    else {
+      STORAGE.animatedFemale.y = STORAGE.floor.y
+    }
+
+    // collisions avec city
+    if (STORAGE.animatedFemale.y >= STORAGE.city.height 
+      || -STORAGE.city.x+STORAGE.animatedFemale.x >= STORAGE.city.width 
+      || -STORAGE.city.x+STORAGE.animatedFemale.x <= 0) {
+      STORAGE.animatedFemale.y += STORAGE.female.vy
+    }
+    else {
+      STORAGE.animatedFemale.y = STORAGE.city.height
+    }
+
+    // défilement des paysages
     STORAGE.background.x -= STORAGE.female.vx 
+    STORAGE.city.x -= STORAGE.female.vx 
+    STORAGE.floor.x -= STORAGE.female.vx 
   }
 
   keyboard(value) {
