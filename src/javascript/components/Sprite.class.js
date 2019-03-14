@@ -88,7 +88,7 @@ class Sprite {
     let that = this
 
     this.left.press = function(mouseData) {
-      STORAGE.female.vx = -3
+      STORAGE.female.vx = -10
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/land"]
     }
@@ -100,7 +100,7 @@ class Sprite {
     }
 
     this.up.press = function(mouseData) {
-      STORAGE.female.vy = -3
+      STORAGE.female.vy = -10
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-jump"]
     }
@@ -112,7 +112,7 @@ class Sprite {
     }
 
     this.right.press = function(mouseData) {
-      STORAGE.female.vx = 3
+      STORAGE.female.vx = 10
       STORAGE.female.vy = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-menu/waiting"]
     }
@@ -124,7 +124,7 @@ class Sprite {
     }
 
     this.down.press = function(mouseData) {
-      STORAGE.female.vy = 3
+      STORAGE.female.vy = 10
       STORAGE.female.vx = 0
       STORAGE.animatedFemale._textures = STORAGE.sheet.animations["elle-0/qte-fall"]
     }
@@ -170,6 +170,17 @@ class Sprite {
       STORAGE.floor.x = 0
       STORAGE.backView.x = 0
       STORAGE.frontView.x = 0
+    }
+    // collision bord droit
+    if (-STORAGE.floor.x >= STORAGE.floor.width - window.innerWidth) {
+      console.log("stop")
+      STORAGE.floor.x = -(STORAGE.floor.width - window.innerWidth)
+      STORAGE.backView.x = -(STORAGE.floor.width - window.innerWidth)
+      STORAGE.frontView.x = -(STORAGE.floor.width - window.innerWidth)
+    }
+    // collision bord bas
+    if (STORAGE.animatedFemale.y >= window.innerHeight) {
+      STORAGE.animatedFemale.y = window.innerHeight
     }
 
     // défilement des paysages
